@@ -22,3 +22,4 @@ while count >0:
 	
 	box = rs.ExtrudeSurface(surface, path,True)
 	rs.DeleteObjects([path, rectangle, surface])
+print ('Hello')
