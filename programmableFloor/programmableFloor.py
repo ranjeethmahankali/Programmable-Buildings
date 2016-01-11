@@ -6,8 +6,8 @@ import System
 
 class floorPanel:
 	h1 = 0
-	h2 = -30
-	h3 = -30
+	h2 = 0
+	h3 = 0
 	p1 = None
 	p2 = None
 	p3 = None
@@ -35,7 +35,7 @@ class floorPanel:
 		self.h3 = newH3
 	
 	def reset(self):
-		self.setPanelState(0,-30,-30)
+		self.setPanelState(0,0,0)
 
 maxHeight = 3000
 
@@ -89,8 +89,12 @@ def useBitmap(filePath):
 			yN += 1
 		xN += 1
 
-file = rs.OpenFileName()
-rs.EnableRedraw(False)
-bitmap = System.Drawing.Bitmap.FromFile(file)
-useBitmap(file)
-rs.EnableRedraw(True)
+def loadPreset():
+	rs.EnableRedraw(False)
+	file = rs.OpenFileName()
+	bitmap = System.Drawing.Bitmap.FromFile(file)
+	useBitmap(file)
+	rs.EnableRedraw(True)
+	
+loadPreset()
+#panelUnit[0][0].setPanel()
