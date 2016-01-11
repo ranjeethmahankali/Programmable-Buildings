@@ -37,14 +37,7 @@ class floorPanel:
 	def reset(self):
 		self.setPanelState(0,-30,-30)
 
-#filePath = rs.OpenFileName()
-bitmap = System.Drawing.Bitmap.FromFile('D:\Media\Pictures\Roorkee.jpg')
-#print(filePath)
-width = bitmap.Width
-height = bitmap.Height
-color = System.Drawing.Bitmap.GetPixel(bitmap, width/2, height/2)
-
-print(color)
+maxHeight = 3000
 
 panel1 = '31657b8e-45a1-4179-9b38-703dfd9a3cad'
 panel2 = 'ea67afd2-ba40-4a7f-ad04-d6476703de68'
@@ -55,8 +48,8 @@ secondaryPanel = []
 sleeve = []
 panelUnit = []
 #creating copeis of these panels
-xNum = 3
-yNum = 3
+xNum = 10
+yNum = 10
 moduleSize = 500
 
 rs.EnableRedraw(False)
@@ -77,10 +70,28 @@ while (xN < xNum):
 		yN += 1
 	xN += 1
 
-rs.DeleteObjects([panel1, panel2, slv])		
+rs.DeleteObjects([panel1, panel2, slv])
 
-panelUnit[0][0].setPanelState(1000, 500, 400)
-panelUnit[2][1].setPanelState(1000, 500, 400)
-panelUnit[0][0].reset()
+rs.EnableRedraw(True)
 
+def useBitmap(filePath):
+	bitmap = System.Drawing.Bitmap.FromFile(filePath)
+	xN = 0
+	while (xN < xNum):
+		yN = 0
+		while (yN < yNum):
+			color = System.Drawing.Bitmap.GetPixel(bitmap, xN, bitmap.Height-1-yN)
+			#accounting for the inversion of y-axis from bitmap to 3d space in the above line
+			h1 = maxHeight*(color.R+1)/256
+			h2 = maxHeight*(color.G+1)/256
+			h3 = maxHeight*(color.B+1)/256
+			panelUnit[xN][yN].setPanelState(h1,h2,h3)
+			
+			yN += 1
+		xN += 1
+
+file = rs.OpenFileName()
+rs.EnableRedraw(False)
+bitmap = System.Drawing.Bitmap.FromFile(file)
+useBitmap(file)
 rs.EnableRedraw(True)
