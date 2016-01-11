@@ -71,7 +71,6 @@ while (xN < xNum):
 	xN += 1
 
 rs.DeleteObjects([panel1, panel2, slv])
-
 rs.EnableRedraw(True)
 
 def useBitmap(filePath):
