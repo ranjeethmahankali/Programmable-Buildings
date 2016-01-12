@@ -37,27 +37,28 @@ class floorPanel:
 	def reset(self):
 		self.setPanelState(0,0,0)
 
-maxHeight = 3000
-
-#panel1 = '31657b8e-45a1-4179-9b38-703dfd9a3cad'
-#panel2 = 'ea67afd2-ba40-4a7f-ad04-d6476703de68'
-#slv = '755ac1ba-7695-430c-b33c-b9824c879baf'
-
-panel1 = 'c17c375d-ddc2-4d80-9a14-838380a17e32'
-panel2 = '563f4a27-29e6-4c4e-b1bb-55074dc0b286'
-slv = 'e8743ea5-b007-4fce-a56e-cad6eb87be06'
+panel1 = '3b0c40dc-f66f-4b69-85c9-b530e0bdf7ed'
+panel2 = 'f9291d72-ec21-47e5-b251-1df1355097ae'
+slv = '0b304346-4e53-4290-afab-b2485c846203'
 
 primaryPanel = []
 secondaryPanel = []
 sleeve = []
 panelUnit = []
-#creating copeis of these panels
+
 xNum = 10
 yNum = 10
+maxHeight = 3000
 moduleSize = 500
-
+#now scaling the imported module to the correct module size
+boundingBox = rs.BoundingBox([panel1,panel2,slv])
+trueSize = rs.Distance(boundingBox[0], boundingBox[1])
+trueHeight = rs.Distance(boundingBox[0], boundingBox[4])
+scFxy = moduleSize/trueSize # scaling factor in x and y directions
+scFz = maxHeight/trueHeight # scaling factor in z direction
+rs.ScaleObjects([panel1, panel2, slv], boundingBox[4], [scFxy, scFxy, scFz])
+#creating copeis of these panels
 rs.EnableRedraw(False)
-
 xN = 0
 while (xN < xNum):
 	primaryPanel.append([])
@@ -77,7 +78,7 @@ while (xN < xNum):
 rs.DeleteObjects([panel1, panel2, slv])
 rs.EnableRedraw(True)
 
-def useBitmap(filePath):
+def useBitmap(filePath, panels):
 	bitmap = System.Drawing.Bitmap.FromFile(filePath)
 	xN = 0
 	while (xN < xNum):
@@ -88,17 +89,16 @@ def useBitmap(filePath):
 			h1 = maxHeight*(color.R+1)/256
 			h2 = maxHeight*(color.G+1)/256
 			h3 = maxHeight*(color.B+1)/256
-			panelUnit[xN][yN].setPanelState(h1,h2,h3)
+			panels[xN][yN].setPanelState(h1,h2,h3)
 			
 			yN += 1
 		xN += 1
 
-def loadPreset():
+def loadPreset(panels):
 	rs.EnableRedraw(False)
 	file = rs.OpenFileName()
 	bitmap = System.Drawing.Bitmap.FromFile(file)
-	useBitmap(file)
+	useBitmap(file, panels)
 	rs.EnableRedraw(True)
 	
-loadPreset()
-#panelUnit[0][0].setPanel()
+loadPreset(panelUnit)
