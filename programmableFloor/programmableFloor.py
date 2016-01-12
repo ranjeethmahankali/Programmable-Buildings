@@ -86,9 +86,9 @@ def useBitmap(filePath, panels):
 		while (yN < yNum):
 			color = System.Drawing.Bitmap.GetPixel(bitmap, xN, bitmap.Height-1-yN)
 			#accounting for the inversion of y-axis from bitmap to 3d space in the above line
-			h1 = maxHeight*(color.R+1)/256
-			h2 = maxHeight*(color.G+1)/256
-			h3 = maxHeight*(color.B+1)/256
+			h1 = maxHeight*(color.R+1)/255
+			h2 = maxHeight*(color.G+1)/255
+			h3 = maxHeight*(color.B+1)/255
 			panels[xN][yN].setPanelState(h1,h2,h3)
 			
 			yN += 1
