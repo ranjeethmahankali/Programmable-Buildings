@@ -39,9 +39,13 @@ class floorPanel:
 
 maxHeight = 3000
 
-panel1 = '31657b8e-45a1-4179-9b38-703dfd9a3cad'
-panel2 = 'ea67afd2-ba40-4a7f-ad04-d6476703de68'
-slv = '755ac1ba-7695-430c-b33c-b9824c879baf'
+#panel1 = '31657b8e-45a1-4179-9b38-703dfd9a3cad'
+#panel2 = 'ea67afd2-ba40-4a7f-ad04-d6476703de68'
+#slv = '755ac1ba-7695-430c-b33c-b9824c879baf'
+
+panel1 = 'c17c375d-ddc2-4d80-9a14-838380a17e32'
+panel2 = '563f4a27-29e6-4c4e-b1bb-55074dc0b286'
+slv = 'e8743ea5-b007-4fce-a56e-cad6eb87be06'
 
 primaryPanel = []
 secondaryPanel = []
