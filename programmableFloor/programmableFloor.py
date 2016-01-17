@@ -4,7 +4,6 @@ import System
 # created on 9th Jan 2015
 
 # this class defines a single floorPanel or Tile as an Object with neccessary functions to control it
-
 class floorPanel:
 	h1 = 0
 	h2 = 0
@@ -110,7 +109,7 @@ xNum = rs.GetInteger('Enter the number of tiles in the x-direction',10)
 yNum = rs.GetInteger('Enter the number of tiles in the y-direction',10)
 
 # these arrays will contain the identifiers of all the different objects
-# these are2d arrays corresponding to positions
+# these are 2d arrays corresponding to positions
 primaryPanel = [] # the top panel
 secondaryPanel = [] # the secondary panel underneath the top panel
 sleeve = [] # the square cross section sleeve
