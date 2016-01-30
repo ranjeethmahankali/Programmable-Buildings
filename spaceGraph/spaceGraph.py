@@ -30,10 +30,13 @@ class cSpace:
 
     def connect(self, space):
         self.connected.add(space.label)
-        self.connected.add(space.leadSpace)
+        sp2 = space
+        while len(sp2.subSpace)>0:
+            self.connected.add(sp2.leadSpace)
+            sp2 = sp2.subSpace[sp2.leadSpace]
+
         if len(self.subSpace)>0:
-            self.subSpace[self.leadSpace].connected.add(space.label)
-            self.subSpace[self.leadSpace].connected.add(space.leadSpace)
+            self.subSpace[self.leadSpace].connect(space)
 
     def connectSubSpaces(self, spaceLabel1, spaceLabel2):
         if self.hasSpace(spaceLabel1) and self.hasSpace(spaceLabel2):
@@ -59,10 +62,15 @@ class cSpace:
         return spaceList
     
 
+"""
 house = cSpace('House')
 
 house.addSpaces([cSpace('Kitchen'),cSpace('Hall'),cSpace('MasterBedroom')])
 house.subSpace['MasterBedroom'].addSpaces([cSpace('MasterBed'),cSpace('MasterToilet')])
 house.subSpace['Kitchen'].addSpaces([cSpace('Cooking'),cSpace('Washing')])
+house.subSpace['Kitchen'].subSpace['Cooking'].addSpaces([cSpace('Stove'),cSpace('Sink')])
+house.subSpace['Kitchen'].subSpace['Washing'].addSpaces([cSpace('Washer'),cSpace('Dryer')])
+house.subSpace['MasterBedroom'].subSpace['MasterBed'].addSpaces([cSpace('Basin'),cSpace('Commode')])
 
 house.connectSubSpaces('Kitchen','MasterBedroom')
+"""
