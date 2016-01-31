@@ -72,7 +72,7 @@ class cSpace:
 
         return spaceList
 
-
+"""
 house = cSpace('House')
 
 house.addSpaces([cSpace('Kitchen'),cSpace('Hall'),cSpace('MasterBedroom')], True)
@@ -85,3 +85,4 @@ house.c['MasterBedroom'].c['MasterBed'].addSpaces([cSpace('Basin'),cSpace('Commo
 house.c['Kitchen'].leadSpace = 'Cooking'
 house.c['MasterBedroom'].leadSpace = 'MasterBed'
 house.connectChildren('Kitchen','MasterBedroom')
+"""
