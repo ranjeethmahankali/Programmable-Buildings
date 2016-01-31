@@ -17,17 +17,17 @@ class cSpace:
         self.connected = set()
         self.parent = None
 
-    def addSpace(self,space):
+    def addChild(self,space):
         if not space.label in self.c:
             space.parent = self.label
             self.c[space.label] = space
         else:
             reportError('space name already taken')
 
-    def addSpaces(self, spaceArr, isOpen = False):
+    def addChildren(self, spaceArr, isOpen = False):
         newL = []
         for sp in spaceArr:
-            self.addSpace(sp)
+            self.addChild(sp)
             newL.append(sp.label)
             
         if isOpen:
@@ -72,17 +72,22 @@ class cSpace:
 
         return spaceList
 
-"""
-house = cSpace('House')
+    def removeChild(self,spaceLabel):
+        if spaceLabel in self.c:
+            del self.c[spaceLabel]
 
-house.addSpaces([cSpace('Kitchen'),cSpace('Hall'),cSpace('MasterBedroom')], True)
-house.c['MasterBedroom'].addSpaces([cSpace('MasterBed'),cSpace('MasterToilet')])
-house.c['Kitchen'].addSpaces([cSpace('Cooking'),cSpace('Washing')])
-house.c['Kitchen'].c['Cooking'].addSpaces([cSpace('Stove'),cSpace('Sink')])
-house.c['Kitchen'].c['Washing'].addSpaces([cSpace('Washer'),cSpace('Dryer')])
-house.c['MasterBedroom'].c['MasterBed'].addSpaces([cSpace('Basin'),cSpace('Commode')])
+    def removeChildren(self, spLabelArr):
+        for spL in spLabelArr:
+            self.removeChild(spL)
 
-house.c['Kitchen'].leadSpace = 'Cooking'
-house.c['MasterBedroom'].leadSpace = 'MasterBed'
-house.connectChildren('Kitchen','MasterBedroom')
-"""
+graph = cSpace('gr')
+
+graph.addChildren([cSpace('A'), cSpace('B'), cSpace('C'), cSpace('D')])
+graph.addChildren([cSpace('E'), cSpace('F')])
+
+graph.connectChildren('A', 'B')
+graph.connectChildren('B', 'C')
+graph.connectChildren('B', 'D')
+graph.connectChildren('C', 'D')
+graph.connectChildren('E', 'F')
+graph.connectChildren('F', 'C')
