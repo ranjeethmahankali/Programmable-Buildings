@@ -11,39 +11,50 @@ class cSpace:
 
     def __init__(self, name):
         self.label = name
-        self.subSpace = defaultdict(object)
+        #this is a dictionary that contains the children of this space
+        self.c = defaultdict(object)
         self.leadSpace = self.label
         self.connected = set()
+        self.parent = None
 
     def addSpace(self,space):
-        if not space.label in self.subSpace:
-            if len(self.subSpace) == 0:
-                self.leadSpace = space.label
-                
-            self.subSpace[space.label] = space
+        if not space.label in self.c:
+            space.parent = self.label
+            self.c[space.label] = space
         else:
             reportError('space name already taken')
 
-    def addSpaces(self, spaceArr):
+    def addSpaces(self, spaceArr, isOpen = False):
+        newL = []
         for sp in spaceArr:
             self.addSpace(sp)
+            newL.append(sp.label)
+            
+        if isOpen:
+            l=0
+            while l < len(newL)-1:
+                j = l+1
+                while j < len(newL):
+                    connectSpaces(self.c[newL[l]], self.c[newL[j]])
+                    j += 1
+                l += 1
 
     def connect(self, space):
         self.connected.add(space.label)
         sp2 = space
-        while len(sp2.subSpace)>0:
+        while sp2.leadSpace != sp2.label:
             self.connected.add(sp2.leadSpace)
-            sp2 = sp2.subSpace[sp2.leadSpace]
+            sp2 = sp2.c[sp2.leadSpace]
 
-        if len(self.subSpace)>0:
-            self.subSpace[self.leadSpace].connect(space)
+        if self.leadSpace != self.label:
+            self.c[self.leadSpace].connect(space)
 
-    def connectSubSpaces(self, spaceLabel1, spaceLabel2):
+    def connectChildren(self, spaceLabel1, spaceLabel2):
         if self.hasSpace(spaceLabel1) and self.hasSpace(spaceLabel2):
-            connectSpaces(self.subSpace[spaceLabel1], self.subSpace[spaceLabel2])
+            connectSpaces(self.c[spaceLabel1], self.c[spaceLabel2])
     
     def hasSpace(self, spaceLabel):
-        if spaceLabel in self.subSpace:
+        if spaceLabel in self.c:
             return True
         else:
             return False
@@ -54,23 +65,23 @@ class cSpace:
         else:
             return False
 
-    def subSpaceList(self):
+    def children(self):
         spaceList = []
-        for sp in self.subSpace:
+        for sp in self.c:
             spaceList.append(sp)
 
         return spaceList
-    
 
-"""
+
 house = cSpace('House')
 
-house.addSpaces([cSpace('Kitchen'),cSpace('Hall'),cSpace('MasterBedroom')])
-house.subSpace['MasterBedroom'].addSpaces([cSpace('MasterBed'),cSpace('MasterToilet')])
-house.subSpace['Kitchen'].addSpaces([cSpace('Cooking'),cSpace('Washing')])
-house.subSpace['Kitchen'].subSpace['Cooking'].addSpaces([cSpace('Stove'),cSpace('Sink')])
-house.subSpace['Kitchen'].subSpace['Washing'].addSpaces([cSpace('Washer'),cSpace('Dryer')])
-house.subSpace['MasterBedroom'].subSpace['MasterBed'].addSpaces([cSpace('Basin'),cSpace('Commode')])
+house.addSpaces([cSpace('Kitchen'),cSpace('Hall'),cSpace('MasterBedroom')], True)
+house.c['MasterBedroom'].addSpaces([cSpace('MasterBed'),cSpace('MasterToilet')])
+house.c['Kitchen'].addSpaces([cSpace('Cooking'),cSpace('Washing')])
+house.c['Kitchen'].c['Cooking'].addSpaces([cSpace('Stove'),cSpace('Sink')])
+house.c['Kitchen'].c['Washing'].addSpaces([cSpace('Washer'),cSpace('Dryer')])
+house.c['MasterBedroom'].c['MasterBed'].addSpaces([cSpace('Basin'),cSpace('Commode')])
 
-house.connectSubSpaces('Kitchen','MasterBedroom')
-"""
+house.c['Kitchen'].leadSpace = 'Cooking'
+house.c['MasterBedroom'].leadSpace = 'MasterBed'
+house.connectChildren('Kitchen','MasterBedroom')
