@@ -80,22 +80,22 @@ class cSpace:
         for spL in spLabelArr:
             self.removeChild(spL)
 
-    def isSibling(self, sibLabel):
+    def hasSibling(self, sibLabel):
         if not self.parent is None:
             if sibLabel in self.parent.c and self.label != sibLabel:
                 return True
             elif self.label == sibLabel:
                 err = 'the cSpace '+self.label+' is being tested if it is its own sibling'
-                reportError(err)
-                return False
+                #reportError(err)
+                return True
             else:
                 return False
         else:
-            reportError(self.label+' has no parents or family')
+            reportError(self.label+' has no parents')
             return False
 
     def sibling(self, sibLabel):
-        if self.isSibling(sibLabel):
+        if self.hasSibling(sibLabel):
             return self.parent.c[sibLabel]
         else:
             reportError('Could not find Sibling')
@@ -115,7 +115,26 @@ class cSpace:
         if d <= maxDepth and len(self.c) > 0:
             for spC in self.c:
                 self.c[spC].printSpace(maxDepth, d)
-        
+
+    def findPathTo(self, sibLabel, path = []):#finds a path to the sibling with label sibLabel
+        if self.hasSibling(sibLabel):
+            #find the path
+            path = path + [self.label]
+
+            if self.label == sibLabel:
+                return path
+
+            for spL in self.connected:
+                if spL not in path:
+                    newPath = self.sibling(spL).findPathTo(sibLabel, path)
+                    if newPath: return newPath
+            return None
+        else:
+            err = 'cannot find path between non-siblings'
+            reportError(err)
+            return None
+
+    #def findAllPathsTo(self, sibLabel, path = [])
 
 #This code is for testing the above classes and defnitions
 sg = cSpace('spaceGraph')
@@ -132,4 +151,6 @@ sg.connectChildren('C', 'D')
 sg.connectChildren('E', 'F')
 sg.connectChildren('F', 'C')
 
-sg.printSpace(2)
+A = sg.c['A']
+path = A.findPathTo('F')
+print(path)
