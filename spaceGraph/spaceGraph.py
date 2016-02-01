@@ -80,10 +80,26 @@ class cSpace:
         for spL in spLabelArr:
             self.removeChild(spL)
 
+    def printSpace(self, maxDepth, d = 0):
+        l = self.label
+        tab = d*'\t'
+        connections = str(self.connected)
+        if len(self.connected) == 0:
+            connections = '{-}'
+
+        spacePrint = tab + l + ': ' + connections
+        print(spacePrint)
+        d += 1
+
+        if d <= maxDepth:
+            for spC in self.c:
+                self.c[spC].printSpace(maxDepth, d)
+
 graph = cSpace('gr')
 
 graph.addChildren([cSpace('A'), cSpace('B'), cSpace('C'), cSpace('D')])
 graph.addChildren([cSpace('E'), cSpace('F')])
+graph.c['A'].addChildren([cSpace('A1'),cSpace('A2'),cSpace('A3')])
 
 graph.connectChildren('A', 'B')
 graph.connectChildren('B', 'C')
