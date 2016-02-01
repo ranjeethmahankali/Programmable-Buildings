@@ -103,12 +103,25 @@ class cSpace:
 
     #this function checks if the cSpace has any descendant with label desLabel
     def hasDescendant(self, desLabel):
-        if self.label == desLabel:
+        if desLabel in self.c:
             return True
         
         for cL in self.c:
             if self.c[cL].hasDescendant(desLabel):
                 return True
+
+        return False
+
+    #this function checks if the cSpace has any ancestor with the label anLabel
+    def hasAncestor(self, anLabel):
+        if not self.parent is None:
+            if self.parent.label == anLabel:
+                return True
+        else:
+            return False
+            
+        if self.parent.hasAncestor(anLabel):
+            return True
 
         return False
     
@@ -208,3 +221,5 @@ path = A.findAllPathsTo('F')
 #print(path)
 short = A.findShortestPathTo('F')
 #print(short)
+A22 = sg.c['A'].c['A2'].c['A23']
+print(A22.hasAncestor('A1'))
