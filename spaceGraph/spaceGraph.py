@@ -134,9 +134,49 @@ class cSpace:
             reportError(err)
             return None
 
-    #def findAllPathsTo(self, sibLabel, path = [])
+    def findAllPathsTo(self, sibLabel, path = []):
+        if self.hasSibling(sibLabel):
+            path = path + [self.label]
+
+            if self.label == sibLabel:
+                return [path]
+
+            paths = []
+            for spL in self.connected:
+                if spL not in path:
+                    newPaths = self.sibling(spL).findAllPathsTo(sibLabel, path)
+                    for newPath in newPaths:
+                        paths.append(newPath)
+
+            return paths
+        else:
+            err = 'cannot find any paths between non-siblings'
+            reportError(err)
+            return None
+
+    def findShortestPathTo(self, sibLabel, path = []):
+        if self.hasSibling(sibLabel):
+            path = path + [self.label]
+
+            if self.label == sibLabel:
+                return path
+
+            shortestPath = None
+            for spL in self.connected:
+                if spL not in path:
+                    newPath = self.sibling(spL).findShortestPathTo(sibLabel, path)
+                    if newPath:
+                        if not shortestPath or len(shortestPath) > len(newPath):
+                            shortestPath = newPath
+
+            return shortestPath
+        else:
+            err = 'cannot find a path between non-siblings'
+            reportError(err)
+            return None
 
 #This code is for testing the above classes and defnitions
+"""
 sg = cSpace('spaceGraph')
 
 sg.addChildren([cSpace('A'), cSpace('B'), cSpace('C'), cSpace('D')])
@@ -152,5 +192,8 @@ sg.connectChildren('E', 'F')
 sg.connectChildren('F', 'C')
 
 A = sg.c['A']
-path = A.findPathTo('F')
-print(path)
+path = A.findAllPathsTo('F')
+#print(path)
+short = A.findShortestPathTo('F')
+print(short)
+"""
