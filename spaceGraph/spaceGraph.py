@@ -100,6 +100,17 @@ class cSpace:
         else:
             reportError('Could not find Sibling')
             return None
+
+    #this function checks if the cSpace has any descendant with label desLabel
+    def hasDescendant(self, desLabel):
+        if self.label == desLabel:
+            return True
+        
+        for cL in self.c:
+            if self.c[cL].hasDescendant(desLabel):
+                return True
+
+        return False
     
     def printSpace(self, maxDepth, d = 0):
         l = self.label
@@ -176,13 +187,14 @@ class cSpace:
             return None
 
 #This code is for testing the above classes and defnitions
-"""
+
 sg = cSpace('spaceGraph')
 
 sg.addChildren([cSpace('A'), cSpace('B'), cSpace('C'), cSpace('D')])
 sg.addChildren([cSpace('E'), cSpace('F')])
 sg.c['A'].addChildren([cSpace('A1'),cSpace('A2'),cSpace('A3')])
 sg.c['A'].connectChildren('A1','A3')
+sg.c['A'].c['A2'].addChildren([cSpace('A21'),cSpace('A22'),cSpace('A23')])
 
 sg.connectChildren('A', 'B')
 sg.connectChildren('B', 'C')
@@ -195,5 +207,4 @@ A = sg.c['A']
 path = A.findAllPathsTo('F')
 #print(path)
 short = A.findShortestPathTo('F')
-print(short)
-"""
+#print(short)
