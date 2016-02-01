@@ -91,15 +91,17 @@ class cSpace:
         print(spacePrint)
         d += 1
 
-        if d <= maxDepth:
+        if d <= maxDepth and len(self.c) > 0:
             for spC in self.c:
                 self.c[spC].printSpace(maxDepth, d)
 
-graph = cSpace('gr')
+#This code is for testing the above classes and defnitions
+graph = cSpace('spaceGraph')
 
 graph.addChildren([cSpace('A'), cSpace('B'), cSpace('C'), cSpace('D')])
 graph.addChildren([cSpace('E'), cSpace('F')])
 graph.c['A'].addChildren([cSpace('A1'),cSpace('A2'),cSpace('A3')])
+graph.c['A'].connectChildren('A1','A3')
 
 graph.connectChildren('A', 'B')
 graph.connectChildren('B', 'C')
@@ -107,3 +109,5 @@ graph.connectChildren('B', 'D')
 graph.connectChildren('C', 'D')
 graph.connectChildren('E', 'F')
 graph.connectChildren('F', 'C')
+
+graph.printSpace(2)
