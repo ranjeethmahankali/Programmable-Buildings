@@ -1,7 +1,7 @@
 from collections import defaultdict
 
 def reportError(errMsg):
-    print(errMsg)
+    print('Error: ' + errMsg)
 
 def connectSpaces(space1, space2):
     space1.connect(space2)
@@ -19,7 +19,7 @@ class cSpace:
 
     def addChild(self,space):
         if not space.label in self.c:
-            space.parent = self.label
+            space.parent = self
             self.c[space.label] = space
         else:
             reportError('space name already taken')
@@ -80,6 +80,27 @@ class cSpace:
         for spL in spLabelArr:
             self.removeChild(spL)
 
+    def isSibling(self, sibLabel):
+        if not self.parent is None:
+            if sibLabel in self.parent.c and self.label != sibLabel:
+                return True
+            elif self.label == sibLabel:
+                err = 'the cSpace '+self.label+' is being tested if it is its own sibling'
+                reportError(err)
+                return False
+            else:
+                return False
+        else:
+            reportError(self.label+' has no parents or family')
+            return False
+
+    def sibling(self, sibLabel):
+        if self.isSibling(sibLabel):
+            return self.parent.c[sibLabel]
+        else:
+            reportError('Could not find Sibling')
+            return None
+    
     def printSpace(self, maxDepth, d = 0):
         l = self.label
         tab = d*'\t'
@@ -94,20 +115,21 @@ class cSpace:
         if d <= maxDepth and len(self.c) > 0:
             for spC in self.c:
                 self.c[spC].printSpace(maxDepth, d)
+        
 
 #This code is for testing the above classes and defnitions
-graph = cSpace('spaceGraph')
+sg = cSpace('spaceGraph')
 
-graph.addChildren([cSpace('A'), cSpace('B'), cSpace('C'), cSpace('D')])
-graph.addChildren([cSpace('E'), cSpace('F')])
-graph.c['A'].addChildren([cSpace('A1'),cSpace('A2'),cSpace('A3')])
-graph.c['A'].connectChildren('A1','A3')
+sg.addChildren([cSpace('A'), cSpace('B'), cSpace('C'), cSpace('D')])
+sg.addChildren([cSpace('E'), cSpace('F')])
+sg.c['A'].addChildren([cSpace('A1'),cSpace('A2'),cSpace('A3')])
+sg.c['A'].connectChildren('A1','A3')
 
-graph.connectChildren('A', 'B')
-graph.connectChildren('B', 'C')
-graph.connectChildren('B', 'D')
-graph.connectChildren('C', 'D')
-graph.connectChildren('E', 'F')
-graph.connectChildren('F', 'C')
+sg.connectChildren('A', 'B')
+sg.connectChildren('B', 'C')
+sg.connectChildren('B', 'D')
+sg.connectChildren('C', 'D')
+sg.connectChildren('E', 'F')
+sg.connectChildren('F', 'C')
 
-graph.printSpace(2)
+sg.printSpace(2)
