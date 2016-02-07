@@ -1,14 +1,18 @@
 from collections import defaultdict
 
+#Handling the error message
 def reportError(errMsg):
     print('Error: ' + errMsg)
 
+#Connects the two spaces back and forth
 def connectSpaces(space1, space2):
     space1.connect(space2)
     space2.connect(space1)
 
+#This is the class for cSpace object
 class cSpace:
 
+    #class initialization
     def __init__(self, name):
         self.label = name
         #this is a dictionary that contains the children of this space
@@ -17,6 +21,7 @@ class cSpace:
         self.connected = set()
         self.parent = None
 
+    #This function adds the given space as a child to this space
     def addChild(self,space):
         if not space.label in self.c:
             space.parent = self
@@ -24,6 +29,7 @@ class cSpace:
         else:
             reportError('space name already taken')
 
+    #This function adds multiple childrfen supplied as a list or a tuple
     def addChildren(self, spaceArr, isOpen = False):
         newL = []
         for sp in spaceArr:
@@ -39,6 +45,7 @@ class cSpace:
                     j += 1
                 l += 1
 
+    #Adds a one-way connection from the given space to this space 
     def connect(self, space):
         self.connected.add(space.label)
         sp2 = space
@@ -49,22 +56,26 @@ class cSpace:
         if self.leadSpace != self.label:
             self.c[self.leadSpace].connect(space)
 
+    #This adds a two way conneciton between the given two children of this space
     def connectChildren(self, spaceLabel1, spaceLabel2):
         if self.hasSpace(spaceLabel1) and self.hasSpace(spaceLabel2):
             connectSpaces(self.c[spaceLabel1], self.c[spaceLabel2])
     
+    #Returns a boolean if this space has the given space as a child
     def hasSpace(self, spaceLabel):
         if spaceLabel in self.c:
             return True
         else:
             return False
 
+    #returns true if this space is connected to the given space
     def isConnected(self, space):
         if space.label in self.connected:
             return True
         else:
             return False
 
+    #returns a list containing the children of this space
     def children(self):
         spaceList = []
         for sp in self.c:
@@ -72,14 +83,17 @@ class cSpace:
 
         return spaceList
 
+    #removes the child space with the given label
     def removeChild(self,spaceLabel):
         if spaceLabel in self.c:
             del self.c[spaceLabel]
 
+    #removes all the children spaces with labels in the provided list
     def removeChildren(self, spLabelArr):
         for spL in spLabelArr:
             self.removeChild(spL)
 
+    #returns true if this space has a sibling with the given label
     def hasSibling(self, sibLabel):
         if not self.parent is None:
             if sibLabel in self.parent.c and self.label != sibLabel:
@@ -94,6 +108,7 @@ class cSpace:
             reportError(self.label+' has no parents')
             return False
 
+    #returns the sibling space object by reference
     def sibling(self, sibLabel):
         if self.hasSibling(sibLabel):
             return self.parent.c[sibLabel]
@@ -125,6 +140,8 @@ class cSpace:
 
         return False
     
+    # this funtion prints the internal structure and children upto
+    # maxDepth number of generations
     def printSpace(self, maxDepth, d = 0):
         l = self.label
         tab = d*'\t'
@@ -140,7 +157,9 @@ class cSpace:
             for spC in self.c:
                 self.c[spC].printSpace(maxDepth, d)
 
-    def findPathTo(self, sibLabel, path = []):#finds a path to the sibling with label sibLabel
+    #this method finds a path to the given sibling space
+    #finds a path to the sibling with label sibLabel
+    def findPathTo(self, sibLabel, path = []):
         if self.hasSibling(sibLabel):
             #find the path
             path = path + [self.label]
@@ -158,6 +177,7 @@ class cSpace:
             reportError(err)
             return None
 
+    #finds all paths to the sibling with label sibLabel
     def findAllPathsTo(self, sibLabel, path = []):
         if self.hasSibling(sibLabel):
             path = path + [self.label]
@@ -178,6 +198,7 @@ class cSpace:
             reportError(err)
             return None
 
+    #finds the shortest path to the sibling with label sibLabel
     def findShortestPathTo(self, sibLabel, path = []):
         if self.hasSibling(sibLabel):
             path = path + [self.label]
