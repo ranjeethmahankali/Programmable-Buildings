@@ -44,11 +44,12 @@ def allPaths(s1, s2):
     sp1 = rmpt.c[s1]
     paths = sp1.findAllPathsTo(s2)
 
-    print('================================================')
-    for path in paths:
-        for p in path:
-            print(p)
+    if paths:
         print('================================================')
+        for path in paths:
+            for p in path:
+                print(p)
+            print('================================================')
 
 """
 sg = cSpace('spaceGraph')
