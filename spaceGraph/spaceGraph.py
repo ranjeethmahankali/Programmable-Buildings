@@ -16,9 +16,9 @@ class cSpace:
     def __init__(self, name):
         self.label = name
         #this is a dictionary that contains the children of this space
-        self.c = defaultdict(object)
-        self.leadSpace = self.label
+        self.c = dict() 
         self.connected = set()
+        #this is the default value for the parent attribute
         self.parent = None
 
     #This function adds the given space as a child to this space
@@ -48,13 +48,6 @@ class cSpace:
     #Adds a one-way connection from the given space to this space 
     def connect(self, space):
         self.connected.add(space.label)
-        sp2 = space
-        while sp2.leadSpace != sp2.label:
-            self.connected.add(sp2.leadSpace)
-            sp2 = sp2.c[sp2.leadSpace]
-
-        if self.leadSpace != self.label:
-            self.c[self.leadSpace].connect(space)
 
     #This adds a two way conneciton between the given two children of this space
     def connectChildren(self, spaceLabel1, spaceLabel2):
