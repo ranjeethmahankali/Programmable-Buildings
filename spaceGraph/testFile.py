@@ -1,5 +1,5 @@
 from spaceGraph import *
-
+"""
 rmpt = cSpace('RmptHouse')
 
 rmpt.addChildren([
@@ -73,6 +73,4 @@ path = A.findAllPathsTo('F')
 short = A.findShortestPathTo('F')
 #print(short)
 A22 = sg.c['A'].c['A2'].c['A23']
-print(A22.hasAncestor('A1'))
-
-"""
+print(A22.relationTo(A))

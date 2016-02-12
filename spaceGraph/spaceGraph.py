@@ -1,4 +1,4 @@
-from collections import defaultdict
+import uuid
 
 #Handling the error message
 def reportError(errMsg):
@@ -15,19 +15,23 @@ class cSpace:
     #class initialization
     def __init__(self, name):
         self.label = name
+        self.id = uuid.uuid4()
         #this is a dictionary that contains the children of this space
-        self.c = dict() 
+        self.c = dict()
         self.connected = set()
         #this is the default value for the parent attribute
         self.parent = None
 
     #This function adds the given space as a child to this space
     def addChild(self,space):
-        if not space.label in self.c:
+        labelIsValid = (not space.label in self.c) and self.label != space.label
+        labelIsValid = labelIsValid and (not self.hasAncestor(space.label))
+        if labelIsValid:
             space.parent = self
             self.c[space.label] = space
         else:
-            reportError('space name already taken')
+            errMsg = 'space name already taken by a sibling or an ancestor or a descendant'
+            reportError(errMsg)
 
     #This function adds multiple childrfen supplied as a list or a tuple
     def addChildren(self, spaceArr, isOpen = False):
@@ -212,3 +216,16 @@ class cSpace:
             err = 'cannot find a path between non-siblings'
             reportError(err)
             return None
+
+    def relationTo(self, space, path = []):
+        if not self.id == space.id:
+            if self.parent == None:
+                return None
+            else:
+                print('not found')
+                path = path + [self.label]
+                self.parent.relationTo(space, path)
+            
+        return path
+            
+            
