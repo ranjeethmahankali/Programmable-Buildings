@@ -217,15 +217,25 @@ class cSpace:
             reportError(err)
             return None
 
-    def relationTo(self, space, path = []):
-        if not self.id == space.id:
-            if self.parent == None:
-                return None
-            else:
-                print('not found')
-                path = path + [self.label]
-                self.parent.relationTo(space, path)
-            
-        return path
-            
-            
+    def relationTo(self, space, path = [], direction = 0):
+        # direction 0 for the node that is the starting node
+        # direction -1 for node that is reached by travelling up the family tree
+        # direction 1 for node that is reached by travelling down the family tree
+        path = path + [[self.label, direction]]
+
+        if self.label == space.label:
+            return path
+
+        # all() and any() are essentially like logic gates for more than two booleans at once
+        # all booleans can be passed iterably directly in the parantheses with a
+        # syntax similar to that of a for loop
+        if (not self.parent is None) and all(self.parent.label not in pE for pE in path):
+            newPath = self.parent.relationTo(space, path, -1)
+            if newPath: return newPath
+
+        for ch in self.c:
+            if all(ch not in pE for pE in path):
+                newPath = self.c[ch].relationTo(space, path, 1)
+                if newPath: return newPath
+
+        return None
