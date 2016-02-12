@@ -217,7 +217,7 @@ class cSpace:
             reportError(err)
             return None
 
-    # this method returns the path through the family tree between this space and a
+    # this method returns the path through the family tree from this space and a
     # non-sibling space
     def relationTo(self, space, path = [], direction = 0):
         # direction 0 for the node that is the starting node
