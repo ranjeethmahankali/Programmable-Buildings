@@ -33,6 +33,10 @@ class cSpace:
     #class initialization
     def __init__(self, name, parentSpace = None):
         self.label = name
+        #this is the unique id that is assigned to each space in order to avoid
+        #confusion in cases where same label is used multiple times across a family tree
+        #for example, the label 'toilet' could be used multiple times in a tree representing
+        #an apartment building with many flats, but all toilets will have unique ids
         self.id = uuid.uuid4()
         #this is a dictionary that contains the children of this space
         self.c = dict()
