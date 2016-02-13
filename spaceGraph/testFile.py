@@ -1,21 +1,21 @@
-from spaceGraph import *
-"""
-rmpt = cSpace('RmptHouse')
+import spaceGraph as sg
+
+rmpt = sg.cSpace('RmptHouse')
 
 rmpt.addChildren([
-    cSpace('Front Yard'),
-    cSpace('Pump'),
-    cSpace('Sales Office'),
-    cSpace('Generator Area'),
-    cSpace('Backyard'),
-    cSpace('Hall'),
-    cSpace('Drawing Room'),
-    cSpace('Blue Bedroom'),
-    cSpace('Kitchen'),
-    cSpace('Aisle'),
-    cSpace('Bedroom'),
-    cSpace('Store Room'),
-    cSpace('Toilets'),
+    sg.cSpace('Front Yard'),
+    sg.cSpace('Pump'),
+    sg.cSpace('Sales Office'),
+    sg.cSpace('Generator Area'),
+    sg.cSpace('Backyard'),
+    sg.cSpace('Hall'),
+    sg.cSpace('Drawing Room'),
+    sg.cSpace('Blue Bedroom'),
+    sg.cSpace('Kitchen'),
+    sg.cSpace('Aisle'),
+    sg.cSpace('Bedroom'),
+    sg.cSpace('Store Room'),
+    sg.cSpace('Toilets'),
     ])
 
 rmpt.connectChildren('Front Yard','Pump')
@@ -76,3 +76,4 @@ short = A.findShortestPathTo('F')
 #print(short)
 A22 = sg.c['A'].c['A2'].c['A23']
 print(A22.relationTo(sg.c['B'].c['B2'].c['B22']))
+"""
