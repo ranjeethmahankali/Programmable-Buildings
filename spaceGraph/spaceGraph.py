@@ -1,4 +1,5 @@
 import uuid
+import math
 
 #Handling the error message
 def reportError(errMsg):
@@ -9,18 +10,34 @@ def connectSpaces(space1, space2):
     space1.connect(space2)
     space2.connect(space1)
 
+#this set contains all the parent-less root spaces in the document
+roots = set()
+
+#returns the labels of all the root spaces in the document as a list
+def rootLabels():
+    rootArr = []
+    for sp in roots:
+        rootArr.append(sp.label)
+
+    return rootArr
+
 #This is the class for cSpace object
 class cSpace:
 
     #class initialization
-    def __init__(self, name):
+    def __init__(self, name, parentSpace = None):
         self.label = name
         self.id = uuid.uuid4()
         #this is a dictionary that contains the children of this space
         self.c = dict()
         self.connected = set()
-        #this is the default value for the parent attribute
-        self.parent = None
+        #this is the deciding the default value for the parent attribute
+        #and also updating the roots of the document
+        if parentSpace is None:
+            self.parent = None
+            roots.add(self)
+        else:
+            parentSpace.addChild(self)
 
     #This function adds the given space as a child to this space
     def addChild(self,space):
@@ -29,8 +46,10 @@ class cSpace:
         if labelIsValid:
             space.parent = self
             self.c[space.label] = space
+            #now removving the child space from the roots set if it was already there
+            roots.discard(space)
         else:
-            errMsg = 'space name already taken by a sibling or an ancestor or a descendant'
+            errMsg = 'space name already taken by a sibling or an ancestor'
             reportError(errMsg)
 
     #This function adds multiple childrfen supplied as a list or a tuple
@@ -72,6 +91,15 @@ class cSpace:
         else:
             return False
 
+    # instead of accessing directly through the array,
+    # this method checks if the child with that label exists and then returns it
+    def child(self, childLabel):
+        if childLabel in self.c:
+            return self.c[childLabel]
+        else:
+            reportError('No child with that label')
+            return None
+
     #returns a list containing the children of this space
     def children(self):
         spaceList = []
@@ -79,6 +107,12 @@ class cSpace:
             spaceList.append(sp)
 
         return spaceList
+
+    def root(self):
+        if self.parent is None:
+            return self
+        else:
+            return self.parent.root()
 
     #removes the child space with the given label
     def removeChild(self,spaceLabel):
@@ -139,7 +173,7 @@ class cSpace:
     
     # this funtion prints the internal structure and children upto
     # maxDepth number of generations
-    def printSpace(self, maxDepth, d = 0):
+    def printSpace(self, maxDepth = math.inf, d = 0):
         l = self.label
         tab = d*'\t'
         connections = str(self.connected)
@@ -225,7 +259,7 @@ class cSpace:
         # direction 1 for node that is reached by travelling down the family tree
         path = path + [[self.label, direction]]
 
-        if self.label == space.label:
+        if self.id == space.id:
             return path
 
         # all() and any() are essentially like logic gates for more than two booleans at once
