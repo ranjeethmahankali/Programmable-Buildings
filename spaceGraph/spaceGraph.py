@@ -21,6 +21,12 @@ def rootLabels():
 
     return rootArr
 
+#this method prints all the spaces in the document created till now with their
+#appropriate family structure
+def printAllSpaces():
+    for space in roots:
+        space.printSpace()
+
 #This is the class for cSpace object
 class cSpace:
 
