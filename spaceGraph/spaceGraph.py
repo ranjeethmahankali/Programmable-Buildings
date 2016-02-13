@@ -114,6 +114,7 @@ class cSpace:
 
         return spaceList
 
+    #this method returns the root space of the family tree of which this space is a part of
     def root(self):
         if self.parent is None:
             return self
