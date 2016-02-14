@@ -1,5 +1,6 @@
 import uuid
 import math
+import copy
 
 #Handling the error message
 def reportError(errMsg):
@@ -77,10 +78,16 @@ class cSpace:
                     connectSpaces(self.c[newL[l]], self.c[newL[j]])
                     j += 1
                 l += 1
+    
+    def changeLabel(self, newLabel):
+        oldLabel = self.label
+        self.label = newLabel
+        del self.parent.c[oldLabel]
+        self.parent.c[newLabel] = self
 
     #Adds a one-way connection from the given space to this space 
     def connect(self, space):
-        self.connected.add(space.label)
+        self.connected.add(space)
 
     #This adds a two way conneciton between the given two children of this space
     def connectChildren(self, spaceLabel1, spaceLabel2):
@@ -96,7 +103,7 @@ class cSpace:
 
     #returns true if this space is connected to the given space
     def isConnected(self, space):
-        if space.label in self.connected:
+        if space in self.connected:
             return True
         else:
             return False
@@ -187,9 +194,20 @@ class cSpace:
     def printSpace(self, maxDepth = math.inf, d = 0):
         l = self.label
         tab = d*'\t'
-        connections = str(self.connected)
+        connections = ''
         if len(self.connected) == 0:
-            connections = '{-}'
+            connections = '-'
+        else:
+            count = 1
+            for space in self.connected:
+                name = space.label
+                if count < len(self.connected):
+                    name += ', '
+                
+                connections += name
+                count += 1
+
+        connections = '{' + connections + '}'
 
         spacePrint = tab + l + ': ' + connections
         print(spacePrint)
@@ -201,17 +219,17 @@ class cSpace:
 
     #this method finds a path to the given sibling space
     #finds a path to the sibling with label sibLabel
-    def findPathTo(self, sibLabel, path = []):
-        if self.hasSibling(sibLabel):
+    def findPathTo(self, targetSpace, path = []):
+        if self.hasSibling(targetSpace.label):
             #find the path
-            path = path + [self.label]
+            path = path + [self]
 
-            if self.label == sibLabel:
+            if self.label == targetSpace.label:
                 return path
 
-            for spL in self.connected:
-                if spL not in path:
-                    newPath = self.sibling(spL).findPathTo(sibLabel, path)
+            for sp in self.connected:
+                if sp not in path:
+                    newPath = sp.findPathTo(targetSpace, path)
                     if newPath: return newPath
             return None
         else:
@@ -220,17 +238,18 @@ class cSpace:
             return None
 
     #finds all paths to the sibling with label sibLabel
-    def findAllPathsTo(self, sibLabel, path = []):
-        if self.hasSibling(sibLabel):
-            path = path + [self.label]
+    def findAllPathsTo(self, targetSpace, path = []):
+        if self.hasSibling(targetSpace.label):
+            #find all paths
+            path = path + [self]
 
-            if self.label == sibLabel:
+            if self.label == targetSpace.label:
                 return [path]
 
             paths = []
-            for spL in self.connected:
-                if spL not in path:
-                    newPaths = self.sibling(spL).findAllPathsTo(sibLabel, path)
+            for sp in self.connected:
+                if sp not in path:
+                    newPaths = sp.findAllPathsTo(targetSpace, path)
                     for newPath in newPaths:
                         paths.append(newPath)
 
@@ -241,17 +260,18 @@ class cSpace:
             return None
 
     #finds the shortest path to the sibling with label sibLabel
-    def findShortestPathTo(self, sibLabel, path = []):
-        if self.hasSibling(sibLabel):
-            path = path + [self.label]
+    def findShortestPathTo(self, targetSpace, path = []):
+        if self.hasSibling(targetSpace.label):
+            #find the shortest path
+            path = path + [self]
 
-            if self.label == sibLabel:
+            if self.label == targetSpace.label:
                 return path
 
             shortestPath = None
-            for spL in self.connected:
-                if spL not in path:
-                    newPath = self.sibling(spL).findShortestPathTo(sibLabel, path)
+            for sp in self.connected:
+                if sp not in path:
+                    newPath = sp.findShortestPathTo(targetSpace, path)
                     if newPath:
                         if not shortestPath or len(shortestPath) > len(newPath):
                             shortestPath = newPath
@@ -286,3 +306,42 @@ class cSpace:
                 if newPath: return newPath
 
         return None
+
+    #this function clones a given space with all the same attributes except the label
+    #which is provided as a parameter. The clone will have same connections to the siblings
+    #the clone will also occupy the same position in the family tree - like a twin brother
+    #to the original space
+    #But if you specifiy a parentSpace then the cloned space will be a child of that
+    #and it will have no connections
+    def clone(self, newLabel, parentSpace = 'sameParent', CloneDepth = 0):
+        if parentSpace == 'sameParent':parentSpace = self.parent
+
+        newSpace = copy.deepcopy(self)
+        newSpace.label = newLabel
+        newSpace.id = uuid.uuid4()
+        newSpace.connected = set()
+
+        if parentSpace:
+            parentSpace.addChild(newSpace)
+            if parentSpace is self.parent:
+                for space in self.connected:
+                    connectSpaces(newSpace, space)
+        else:
+            newSpace.parent = parentSpace
+            roots.add(newSpace)
+
+        return newSpace
+
+def printPath(path):
+    pathPrint = ''
+    
+    i = 0
+    while i < len(path):
+        pathPrint += path[i].label
+        
+        if i != len(path)-1:
+            pathPrint += ' -> '
+
+        i += 1
+            
+    print(pathPrint)
