@@ -33,23 +33,6 @@ rmpt.connectChildren('Generator Area','Pump')
 rmpt.connectChildren('Pump','Sales Office')
 rmpt.connectChildren('Blue Bedroom','Drawing Room')
 
-def shortestPath(s1, s2):
-    sp1 = rmpt.c[s1]
-    path = sp1.findShortestPathTo(s2)
-
-    for p in path:
-        print(p)    
-def allPaths(s1, s2):
-    sp1 = rmpt.c[s1]
-    paths = sp1.findAllPathsTo(s2)
-
-    if paths:
-        print('================================================')
-        for path in paths:
-            for p in path:
-                print(p)
-            print('================================================')
-
 '''
 rmpt.child('Hall').addChildren([sg.cSpace('TV Area'), sg.cSpace('Dining'), sg.cSpace('Small Bed')])
 rmpt.printSpace()
