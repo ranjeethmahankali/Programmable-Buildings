@@ -38,8 +38,7 @@ def shortestPath(s1, s2):
     path = sp1.findShortestPathTo(s2)
 
     for p in path:
-        print(p)
-
+        print(p)    
 def allPaths(s1, s2):
     sp1 = rmpt.c[s1]
     paths = sp1.findAllPathsTo(s2)
@@ -50,3 +49,20 @@ def allPaths(s1, s2):
             for p in path:
                 print(p)
             print('================================================')
+
+'''
+rmpt.child('Hall').addChildren([sg.cSpace('TV Area'), sg.cSpace('Dining'), sg.cSpace('Small Bed')])
+rmpt.printSpace()
+hall = rmpt.child('Hall')
+hall.clone('Hall2')
+rmpt.printSpace()
+hall.connectChildren('Small Bed', 'TV Area')
+rmpt.printSpace()
+
+rmpt2 = rmpt.clone('rmptClone')
+rmpt2.child('Aisle').changeLabel('Gully')
+rmpt2.printSpace()
+'''
+
+path = rmpt.child('Store Room').findShortestPathTo(rmpt.child('Blue Bedroom'))
+allPaths = rmpt.child('Store Room').findAllPathsTo(rmpt.child('Blue Bedroom'))
