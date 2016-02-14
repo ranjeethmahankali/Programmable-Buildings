@@ -60,7 +60,7 @@ class cSpace:
             #now removving the child space from the roots set if it was already there
             roots.discard(space)
         else:
-            errMsg = 'space name already taken by a sibling or an ancestor'
+            errMsg = 'space name '+space.label+' already taken by a sibling or an ancestor'
             reportError(errMsg)
 
     #This function adds multiple childrfen supplied as a list or a tuple
