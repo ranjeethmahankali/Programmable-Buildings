@@ -87,7 +87,11 @@ class cSpace:
 
     #Adds a one-way connection from the given space to this space 
     def connect(self, space):
-        self.connected.add(space)
+        if self.isSibling(space):
+            self.connected.add(space)
+        else:
+            errMsg = 'Cannot connect '+self.label+' to a nonSibling '+space.label
+            reportError(errMsg)
 
     #This adds a two way conneciton between the given two children of this space
     def connectChildren(self, spaceLabel1, spaceLabel2):
@@ -148,6 +152,22 @@ class cSpace:
             if sibLabel in self.parent.c and self.label != sibLabel:
                 return True
             elif self.label == sibLabel:
+                err = 'the cSpace '+self.label+' is being tested if it is its own sibling'
+                #reportError(err)
+                return True
+            else:
+                return False
+        else:
+            reportError(self.label+' has no parents')
+            return False
+
+    #returns true if the given space is a sibling of this space
+    def isSibling(self, sibSpace):
+        if not self.parent is None:
+            if sibSpace.label in self.parent.c and self.label != sibSpace.label:
+                if self.parent.c[sibSpace.label].id == sibSpace.id:
+                    return True
+            elif self.label == sibSpace.label:
                 err = 'the cSpace '+self.label+' is being tested if it is its own sibling'
                 #reportError(err)
                 return True
@@ -220,7 +240,7 @@ class cSpace:
     #this method finds a path to the given sibling space
     #finds a path to the sibling with label sibLabel
     def findPathTo(self, targetSpace, path = []):
-        if self.hasSibling(targetSpace.label):
+        if self.isSibling(targetSpace):
             #find the path
             path = path + [self]
 
@@ -239,7 +259,7 @@ class cSpace:
 
     #finds all paths to the sibling with label sibLabel
     def findAllPathsTo(self, targetSpace, path = []):
-        if self.hasSibling(targetSpace.label):
+        if self.isSibling(targetSpace):
             #find all paths
             path = path + [self]
 
@@ -261,7 +281,7 @@ class cSpace:
 
     #finds the shortest path to the sibling with label sibLabel
     def findShortestPathTo(self, targetSpace, path = []):
-        if self.hasSibling(targetSpace.label):
+        if self.isSibling(targetSpace):
             #find the shortest path
             path = path + [self]
 
@@ -331,6 +351,8 @@ class cSpace:
             roots.add(newSpace)
 
         return newSpace
+
+    #write a 'navigateTo' function that can navigate to any space that is under the same root
 
 def printPath(path):
     pathPrint = ''

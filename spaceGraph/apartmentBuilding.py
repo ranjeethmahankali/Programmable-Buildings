@@ -6,10 +6,10 @@ flatsPerFloor = 2
 aptBldg = sg.cSpace('Apartment Building')
 groundFloor = sg.cSpace('Ground Floor')
 
-circulationCore = sg.cSpace('Circulation Core')
+circulationCore = sg.cSpace('Circulation Core', aptBldg)
 circulationCore.addChildren([sg.cSpace('Elevator'), sg.cSpace('Stairwell')],True)
 
-groundFloor.addChildren([sg.cSpace('Parking'),circulationCore], True)
+groundFloor.addChild(sg.cSpace('Parking'))
 aptBldg.addChild(groundFloor)
 
 aptRooms = ['Living Room',
@@ -38,7 +38,8 @@ while f <= floorNum:
     floorLabel = 'Floor ' + str(f)
     floor = sg.cSpace(floorLabel, aptBldg)
     lobby = sg.cSpace('Lobby '+str(f))
-    floor.addChildren([lobby, circulationCore], True)
+    floor.addChild(lobby)
+    sg.connectSpaces(floor, circulationCore)
 
     # flat number variable
     a = 1
@@ -74,6 +75,6 @@ while f <= floorNum:
         a += 1
     f += 1
 
-aptBldg.printSpace(1)
+aptBldg.printSpace(2)
 
 aptBldg2 = aptBldg.clone('Apartment Building 2')
