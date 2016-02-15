@@ -308,7 +308,7 @@ class cSpace:
         # direction 0 for the node that is the starting node
         # direction -1 for node that is reached by travelling up the family tree
         # direction 1 for node that is reached by travelling down the family tree
-        path = path + [[self.label, direction]]
+        path = path + [[self, direction]]
 
         if self.id == space.id:
             return path
@@ -316,12 +316,12 @@ class cSpace:
         # all() and any() are essentially like logic gates for more than two booleans at once
         # all booleans can be passed iterably directly in the parantheses with a
         # syntax similar to that of a for loop
-        if (not self.parent is None) and all(self.parent.label not in pE for pE in path):
+        if (not self.parent is None) and all(self.parent not in pE for pE in path):
             newPath = self.parent.relationTo(space, path, -1)
             if newPath: return newPath
 
         for ch in self.c:
-            if all(ch not in pE for pE in path):
+            if all(self.c[ch] not in pE for pE in path):
                 newPath = self.c[ch].relationTo(space, path, 1)
                 if newPath: return newPath
 
@@ -352,7 +352,20 @@ class cSpace:
 
         return newSpace
 
-    #write a 'navigateTo' function that can navigate to any space that is under the same root
+    #this function navigates to any space that is under the same root
+    def navigateTo(self, targetSpace):
+        selfRoot = self.root()
+        targetRoot = targetSpace.root()
+
+        if selfRoot.id == targetRoot.id:
+            #navigation starts
+            route = []
+            rel = self.relationTo(targetSpace)
+            
+        else:
+            errMsg = 'Cannot navigate because '+self.label+' and '+targetSpace.label+' do not share a common root'
+            reportError(errMsg)
+            return []
 
 def printPath(path):
     pathPrint = ''
@@ -367,3 +380,19 @@ def printPath(path):
         i += 1
             
     print(pathPrint)
+
+def printRelation(relation):
+    relPrint = ''
+    l = len(relation)
+
+    i = 0
+    while i < l-1:
+        if relation[i+1][1] == 1:
+            relPrint += relation[i][0].label + ' ( '
+        elif relation[i+1][1] == -1:
+            relPrint += relation[i][0].label + ' ) '
+
+        i += 1
+
+    relPrint += relation[l-1][0].label
+    print(relPrint)
