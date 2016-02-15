@@ -78,3 +78,11 @@ while f <= floorNum:
 aptBldg.printSpace(2)
 
 aptBldg2 = aptBldg.clone('Apartment Building 2')
+
+#print(sg.printRelation(flat.relationTo(aptBldg.child('Floor 1').child('Flat #101').child('Kitchen'))))
+
+#route = aptBldg.navigateTo(aptBldg.child('Floor 1').child('Flat #101').child('Kitchen'))
+route = aptBldg.child('Floor 1').child('Flat #101').child('Kitchen').navigateTo(aptBldg)
+routePrint = sg.printRoute(route)
+
+print(routePrint)
