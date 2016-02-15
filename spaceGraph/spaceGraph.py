@@ -361,12 +361,76 @@ class cSpace:
             #navigation starts
             route = []
             rel = self.relationTo(targetSpace)
-            
+
+            i = 0
+            c = None #indec of the common ancestor in the list
+            p1 = None #index of parent 1 in the list
+            p2 = None #index of parent 2 in the list
+            while i < len(rel)-1:
+                #print(rel[i+1][1])
+                if rel[i+1][1] == 1:
+                    c = i
+                    if i != 0:
+                        p1 = i-1
+                        p2 = i+1
+                    break
+
+                i += 1
+
+            #print(c,p1,p2)
+
+            if c and p1 and p2:
+                #print(rel[p1][0].label,'and', rel[p2][0].label)
+                path = rel[p1][0].findShortestPathTo(rel[p2][0])
+                rel1 = rel[:(p1+1)]
+                rel2 = rel[p2:]
+
+                i = 0
+                while i < len(rel1):
+                    direction = None
+                    
+                    if i == 0:
+                        direction = 'start'
+                    else:
+                        direction = -1
+
+                    route.append([rel1[i][0], direction])
+                    
+                    i += 1
+
+                i = 1
+                while i < len(path):
+                    route.append([path[i],0])
+                    i += 1
+
+                i = 1
+                while i < len(rel2):
+                    route.append([rel2[i][0],1])
+                    i += 1
+                    
+            else:
+                i = 0
+                while i < len(rel):
+                    direction = None
+                    if i == 0:
+                        direction = 'start'
+                    else:
+                        direction = rel[i][1]
+                        
+                    route.append([rel[i][0],direction])
+
+                    i += 1
+
+            return route
+                    
+
+            #should improve this method in the future after adding terminal spaces concept for the connections
         else:
             errMsg = 'Cannot navigate because '+self.label+' and '+targetSpace.label+' do not share a common root'
             reportError(errMsg)
             return []
 
+# returns the path as a string with spaces separated by arrows
 def printPath(path):
     pathPrint = ''
     
@@ -379,11 +443,16 @@ def printPath(path):
 
         i += 1
             
-    print(pathPrint)
+    return pathPrint
 
+# returns the relation as a string with parents and children denoted by
+# closing and opening braces respectively
 def printRelation(relation):
     relPrint = ''
     l = len(relation)
+
+    if l == 1:
+        return relation[0][0].label
 
     i = 0
     while i < l-1:
@@ -395,4 +464,29 @@ def printRelation(relation):
         i += 1
 
     relPrint += relation[l-1][0].label
-    print(relPrint)
+
+    return relPrint
+
+# returns the route(that you get from navigateTo function) as a string with braces and
+# arrow marks separating the spaces
+def printRoute(route):
+    rtPrint = ''
+    l = len(route)
+
+    if l == 1:
+        return route[0][0].label
+    
+    i = 0
+    while i < l-1:
+        if route[i+1][1] == 0:
+            rtPrint += route[i][0].label + ' -> '
+        elif route[i+1][1] == 1:
+            rtPrint += route[i][0].label + ' ( '
+        elif route[i+1][1] == -1:
+            rtPrint += route[i][0].label + ' ) '
+            
+        i += 1
+
+    rtPrint += route[l-1][0].label
+
+    return rtPrint
