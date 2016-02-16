@@ -114,11 +114,15 @@ class cSpace:
 
     #Adds a one-way connection from the given space to this space 
     def connect(self, space):
-        if self.isSibling(space):
-            self.connected.add(space)
-        else:
-            errMsg = 'Cannot connect '+self.label+' to a nonSibling '+space.label
-            reportError(errMsg)
+        if isinstance(space,cSpace):            
+            if self.isSibling(space):
+                self.connected.add(space)
+            else:
+                errMsg = 'Cannot connect '+self.label+' to a nonSibling '+space.label
+                reportError(errMsg)
+        elif isinstance(space,list):
+            a = 5 #this line is just sample code to prevent indentation errors
+            #add code here to add the terminals from the array
 
     #This adds a two way conneciton between the given two children of this space
     def connectChildren(self, spaceLabel1, spaceLabel2):
