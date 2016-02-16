@@ -13,6 +13,8 @@ def connectSpaces(space1, space2):
 
 #this set contains all the parent-less root spaces in the document
 roots = set()
+#this is the dictionary of all Spaces in the document with their ids as keys
+spaceList = dict()
 
 #returns the labels of all the root spaces in the document as a list
 def rootLabels():
@@ -24,9 +26,22 @@ def rootLabels():
 
 #this method prints all the spaces in the document created till now with their
 #appropriate family structure
-def printAllSpaces():
+def printAllRoots():
     for space in roots:
         space.printSpace()
+
+#prints the list of all spaces in the document with their ids
+def printAllSpaces():
+    for spID in spaceList:
+        print(spaceList[spID].label + ' : ' + str(spID))
+
+#returns the space with the given id from the set of all spaces in the document.
+#returns none of no space exists with that id
+def spaceWithID(spID):
+    if spID in spaceList:
+        return spaceList[spID]
+    else:
+        reportError('cannot find a space with the id : '+str(spID))
 
 #This is the class for cSpace object
 class cSpace:
@@ -39,9 +54,21 @@ class cSpace:
         #for example, the label 'toilet' could be used multiple times in a tree representing
         #an apartment building with many flats, but all toilets will have unique ids
         self.id = uuid.uuid4()
+        if self.id in spaceList:
+            reportError('Id clash while creating new space !!!')
+        else:
+            spaceList[self.id] = self
         #this is a dictionary that contains the children of this space
         self.c = dict()
+        #this is the set that contains the references to the sibling spaces that are
+        #connected to this space
         self.connected = set()
+        #this dictionary contains references to terminal spaces
+        #terminal spaces are children of this space which serve as a terminal for the
+        #connection between this space and any other space
+        #the dictionary keys will be the ids of the connected spaces which
+        #may be connected to this space or a prent space with this as a temrinal
+        self.t = dict()
         #this is the deciding the default value for the parent attribute
         #and also updating the roots of the document
         if parentSpace is None:
@@ -333,12 +360,17 @@ class cSpace:
     #to the original space
     #But if you specifiy a parentSpace then the cloned space will be a child of that
     #and it will have no connections
-    def clone(self, newLabel, parentSpace = 'sameParent', CloneDepth = 0):
+    def clone(self, newLabel, parentSpace = 'sameParent'):
         if parentSpace == 'sameParent':parentSpace = self.parent
 
         newSpace = copy.deepcopy(self)
         newSpace.label = newLabel
         newSpace.id = uuid.uuid4()
+        if newSpace.id in spaceList:
+            reportError('Id clash while cloning ' + self.label + ' !!!')
+        else:
+            spaceList[newSpace.id] = newSpace
+        
         newSpace.connected = set()
 
         if parentSpace:

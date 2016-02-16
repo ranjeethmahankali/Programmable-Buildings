@@ -86,3 +86,4 @@ route = aptBldg.child('Floor 1').child('Flat #101').child('Kitchen').navigateTo(
 routePrint = sg.printRoute(route)
 
 print(routePrint)
+sg.printAllSpaces()
