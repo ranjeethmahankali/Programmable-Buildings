@@ -365,12 +365,6 @@ class cSpace:
 
         newSpace = copy.deepcopy(self)
         newSpace.label = newLabel
-        newSpace.id = uuid.uuid4()
-        if newSpace.id in spaceList:
-            reportError('Id clash while cloning ' + self.label + ' !!!')
-        else:
-            spaceList[newSpace.id] = newSpace
-        
         newSpace.connected = set()
 
         if parentSpace:
@@ -379,8 +373,23 @@ class cSpace:
                 for space in self.connected:
                     connectSpaces(newSpace, space)
         else:
-            newSpace.parent = parentSpace
+            newSpace.parent = parentSpace#and here parentSpace is None
             roots.add(newSpace)
+
+        #add newSpace and all the descendants of the newSpace to the spaceList
+        def addSpace(space):
+            #giving the space a unique id because this is a copied object
+            space.id = uuid.uuid4()
+            if space.id in spaceList:
+                reportError('Id clash while cloning ' + self.label + ' !!!')
+                return None
+            else:
+                spaceList[space.id] = space
+
+                for spL in space.c:
+                    addSpace(space.c[spL])
+
+        addSpace(newSpace)
 
         return newSpace
 
