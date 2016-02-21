@@ -8,13 +8,17 @@ def reportError(errMsg):
 
 #Connects the two spaces back and forth
 def connectSpaces(space1, space2):
-    space1.connect(space2)
-    space2.connect(space1)
+    c1 = space1.connect(space2)
+    c2 = space2.connect(space1)
+
+    return [c1,c2]
 
 #this set contains all the parent-less root spaces in the document
 roots = set()
 #this is the dictionary of all Spaces in the document with their ids as keys
 spaceList = dict()
+#this is the dictionary of all connection objects with their ids as keys
+connectionList = dict()
 
 #returns the labels of all the root spaces in the document as a list
 def rootLabels():
@@ -63,11 +67,9 @@ class cSpace:
         #this is the set that contains the references to the sibling spaces that are
         #connected to this space
         self.connected = set()
-        #this dictionary contains references to terminal spaces
-        #terminal spaces are children of this space which serve as a terminal for the
-        #connection between this space and any other space
-        #the dictionary keys will be the ids of the connected spaces which
-        #may be connected to this space or a prent space with this as a temrinal
+        #this is a dictionary of all incoming connection objects
+        self.con = dict()
+        #this dictionary contains terminal spaces with connection ids as keys
         self.t = dict()
         #this is the deciding the default value for the parent attribute
         #and also updating the roots of the document
@@ -117,20 +119,54 @@ class cSpace:
         if isinstance(space,cSpace):            
             if self.isSibling(space):
                 self.connected.add(space)
+                self.con[space.id] = connection(space,self)
+                return self.con[space.id]
             else:
                 errMsg = 'Cannot connect '+self.label+' to a nonSibling '+space.label
                 reportError(errMsg)
-        elif isinstance(space,list):
-            a = 5 #this line is just sample code to prevent indentation errors
-            #add code here to add the terminals from the array
+                return None
+        else:
+            reportError('This is not a cSpace object so cannot connect it to anything')
+            return None
+
+    #this method adds terminalSpace as the terminal for this space for its connection with
+    #the connectedSpace
+    def addTerminal(self, conObj, terminalSpace):
+        if terminalSpace.parent != self:
+            reportError('Cannot add terminal')
+            return None
+        
+        sp1 = conObj.fromSpace
+        sp2 = conObj.toSpace
+
+        isValid = False
+
+        if self == sp2:
+            isValid = True
+        else:
+            if self.parent:
+                if conObj.id in self.parent.t and self.parent.t[conObj.id] == self:
+                    isValid = True
+
+        if isValid:
+            self.t[conObj.id] = terminalSpace
+
+    #returns the terminal space of this space for the connection conObj
+    def terminal(self, conObj):
+        if conObj.id in self.t:
+            return self.t[conObj.id]
+        else:
+            reportError('this terminal does not exist')
+            return None
+        
 
     #This adds a two way conneciton between the given two children of this space
     def connectChildren(self, spaceLabel1, spaceLabel2):
-        if self.hasSpace(spaceLabel1) and self.hasSpace(spaceLabel2):
+        if self.hasChild(spaceLabel1) and self.hasChild(spaceLabel2):
             connectSpaces(self.c[spaceLabel1], self.c[spaceLabel2])
     
     #Returns a boolean if this space has the given space as a child
-    def hasSpace(self, spaceLabel):
+    def hasChild(self, spaceLabel):
         if spaceLabel in self.c:
             return True
         else:
@@ -426,8 +462,11 @@ class cSpace:
 
             if c and p1 and p2:
                 #print(rel[p1][0].label,'and', rel[p2][0].label)
-                path = rel[p1][0].findShortestPathTo(rel[p2][0])
+                #this is the list up to the child of the common ancestor
                 rel1 = rel[:(p1+1)]
+                #this is the path b/n children of the common ancestor
+                path = rel[p1][0].findShortestPathTo(rel[p2][0])
+                #this is the path from the child of the common ancestor
                 rel2 = rel[p2:]
 
                 i = 0
@@ -535,3 +574,17 @@ def printRoute(route):
     rtPrint += route[l-1][0].label
 
     return rtPrint
+
+class connection:
+
+    def __init__(self, source, destination):
+        self.fromSpace = source
+        self.toSpace = destination
+
+        #print('new connection between '+source.label+' and '+destination.label)
+        
+        self.id = uuid.uuid4()
+        if self.id in connectionList:
+            reportError('Id clash for this connection')
+        else:
+            connectionList[self.id] = self

@@ -32,6 +32,9 @@ kitchen = ['Washing Area',
 guestBedroom = ['Guest Bed',
                 'Storage Cabinets']
 
+drawingRoom = ['Seating',
+               'Table']
+
 # floor number variable
 f = 1
 while f <= floorNum:
@@ -46,7 +49,7 @@ while f <= floorNum:
     while a <= flatsPerFloor:
         flatLabel = 'Flat #' + str(f) + '0' + str(a)
         flat = sg.cSpace(flatLabel, floor)
-        sg.connectSpaces(flat,lobby)
+        flatCon = sg.connectSpaces(flat,lobby)
 
         for roomLabel in aptRooms:
             room = sg.cSpace(roomLabel, flat)
@@ -61,8 +64,14 @@ while f <= floorNum:
             elif roomLabel == 'Guest Bedroom':
                 for sp in guestBedroom:
                     spaces += [sg.cSpace(sp)]
+            elif roomLabel == 'Drawing Room':
+                for sp in drawingRoom:
+                    spaces += [sg.cSpace(sp)]
 
             room.addChildren(spaces, True)
+
+        flat.addTerminal(flatCon[0], flat.child('Drawing Room'))
+        flat.child('Drawing Room').addTerminal(flatCon[0], flat.child('Drawing Room').child('Seating'))
 
         flat.connectChildren('Drawing Room', 'Living Room')
         flat.connectChildren('Kitchen', 'Living Room')
@@ -75,15 +84,16 @@ while f <= floorNum:
         a += 1
     f += 1
 
-aptBldg.printSpace(2)
+#aptBldg.printSpace(2)
 
 aptBldg2 = aptBldg.clone('Apartment Building 2')
 
 #print(sg.printRelation(flat.relationTo(aptBldg.child('Floor 1').child('Flat #101').child('Kitchen'))))
 
 #route = aptBldg.navigateTo(aptBldg.child('Floor 1').child('Flat #101').child('Kitchen'))
-route = aptBldg.child('Floor 1').child('Flat #101').child('Kitchen').navigateTo(aptBldg)
+route = aptBldg.child('Floor 1').child('Flat #101').child('Kitchen').navigateTo(flat.child('Master Bedroom').child('Master Toilet'))
 routePrint = sg.printRoute(route)
 
 print(routePrint)
+#flat.printSpace()
 #sg.printAllSpaces()
