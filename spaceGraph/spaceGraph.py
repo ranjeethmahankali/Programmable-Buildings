@@ -107,7 +107,8 @@ class cSpace:
                     connectSpaces(self.c[newL[l]], self.c[newL[j]])
                     j += 1
                 l += 1
-    
+
+    #change the label of the space properly without messing up the family structu
     def changeLabel(self, newLabel):
         oldLabel = self.label
         self.label = newLabel
@@ -156,14 +157,20 @@ class cSpace:
         if conObj.id in self.t:
             return self.t[conObj.id]
         else:
-            reportError('this terminal does not exist')
+            #reportError('this terminal does not exist for ' + self.label)
+            return None
+
+    def accessTo(self, space):
+        if space.id in self.con:
+            return self.con[space.id]
+        else:
             return None
         
 
     #This adds a two way conneciton between the given two children of this space
     def connectChildren(self, spaceLabel1, spaceLabel2):
         if self.hasChild(spaceLabel1) and self.hasChild(spaceLabel2):
-            connectSpaces(self.c[spaceLabel1], self.c[spaceLabel2])
+            c = connectSpaces(self.c[spaceLabel1], self.c[spaceLabel2])
     
     #Returns a boolean if this space has the given space as a child
     def hasChild(self, spaceLabel):
@@ -505,10 +512,50 @@ class cSpace:
 
                     i += 1
 
-            return route
-                    
+            #processing for navigation through terminal spaces - starts
+            #while leaving the source space
+            i = 0
+            while i < len(route)-1:
+                if route[i+1][1] == 0 and route[i][1] == -1:
+                    j = i
+                    while j > 0:
+                        if route[j+1][1] == 0 and route[j][1] == -1:
+                            access = route[j][0].accessTo(route[j+1][0])
+                            terminalSpace = route[j][0].terminal(access)
+                            if terminalSpace:
+                                traverse = route[j-1][0].findShortestPathTo(terminalSpace)
 
-            #should improve this method in the future after adding terminal spaces concept for the connections
+                                k = 1
+                                while k < len(traverse):
+                                    route.insert(j+k-1, [traverse[k], 0])
+                                    k += 1
+
+                                j += len(traverse)-1
+                        
+                        j -= 1
+
+                elif route[i+1][1] == 1 and route[i][1] == 0:
+                    access = route[i][0].accessTo(route[i-1][0])
+                    terminalSpace = route[i][0].terminal(access)
+
+                    if terminalSpace:
+                        traverse = terminalSpace.findShortestPathTo(route[i+1][0])
+                        del route[i+1]
+
+                        k = 0
+                        while k < len(traverse):
+                            direction = 0
+                            if k == 0:
+                                direction = 1
+                            
+                            route.insert(i+k+1, [traverse[k], direction])
+                            k += 1
+
+                i += 1
+                
+            #processing for navigation through terminal spaces - ends
+            return route
+
         else:
             errMsg = 'Cannot navigate because '+self.label+' and '+targetSpace.label+' do not share a common root'
             reportError(errMsg)

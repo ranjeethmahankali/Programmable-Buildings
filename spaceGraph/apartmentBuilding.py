@@ -1,7 +1,7 @@
 import spaceGraph as sg
 
-floorNum = 2
-flatsPerFloor = 2
+floorNum = 6
+flatsPerFloor = 6
 
 aptBldg = sg.cSpace('Apartment Building')
 groundFloor = sg.cSpace('Ground Floor')
@@ -42,7 +42,8 @@ while f <= floorNum:
     floor = sg.cSpace(floorLabel, aptBldg)
     lobby = sg.cSpace('Lobby '+str(f))
     floor.addChild(lobby)
-    sg.connectSpaces(floor, circulationCore)
+    fc = sg.connectSpaces(floor, circulationCore)
+    floor.addTerminal(fc[0], lobby)
 
     # flat number variable
     a = 1
@@ -80,6 +81,14 @@ while f <= floorNum:
         flat.connectChildren('Toilet', 'Living Room')
         flat.connectChildren('Master Bedroom', 'Living Room')
         flat.connectChildren('Guest Bedroom', 'Living Room')
+
+        bedroom = flat.child('Master Bedroom')
+        for sp in bedroom.con:
+            bedroom.addTerminal(bedroom.con[sp], bedroom.child('Master Bed'))   
+
+        kit = flat.child('Kitchen')
+        for sp in kit.con:
+            kit.addTerminal(kit.con[sp], kit.child('Cooking Area'))
         
         a += 1
     f += 1
@@ -91,7 +100,9 @@ aptBldg2 = aptBldg.clone('Apartment Building 2')
 #print(sg.printRelation(flat.relationTo(aptBldg.child('Floor 1').child('Flat #101').child('Kitchen'))))
 
 #route = aptBldg.navigateTo(aptBldg.child('Floor 1').child('Flat #101').child('Kitchen'))
-route = aptBldg.child('Floor 1').child('Flat #101').child('Kitchen').navigateTo(flat.child('Master Bedroom').child('Master Toilet'))
+cooking101 = aptBldg.child('Floor 1').child('Flat #101').child('Kitchen').child('Washing Area')
+flat = aptBldg.child('Floor 5').child('Flat #503')
+route = cooking101.navigateTo(flat.child('Master Bedroom').child('Master Toilet'))
 routePrint = sg.printRoute(route)
 
 print(routePrint)
