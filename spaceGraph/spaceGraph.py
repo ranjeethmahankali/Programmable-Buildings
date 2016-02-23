@@ -210,6 +210,17 @@ class cSpace:
         else:
             return self.parent.root()
 
+    #this method returns the depth of this space from its root
+    def depth(self):
+        if self.parent:
+            return (1 + self.parent.depth())
+        else:
+            return 0
+
+    #this method returns the relative depth of this space w.r.t another one
+    def relDepth(self, space):
+        return (space.depth() - self.depth())
+
     #removes the child space with the given label
     def removeChild(self,spaceLabel):
         if spaceLabel in self.c:
