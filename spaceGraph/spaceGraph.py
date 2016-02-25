@@ -215,7 +215,7 @@ class cSpace:
         if self.parent:
             return (1 + self.parent.depth())
         else:
-            return 0
+            return 1
 
     #this method returns the relative depth of this space w.r.t another one
     def relDepth(self, space):
